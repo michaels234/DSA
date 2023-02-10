@@ -19,24 +19,41 @@ class BigO():
 	def add(self):
 		self.count += 1
 	
-	def get_order_index(self, count=None):
+	def get_order_index(self, count=None, prnt=None):
 		if not count: count = self.count
 		for i in range(1, len(self.orders)):
 			if self.orders[i-1]['calc'] <= count <= self.orders[i]['calc']:
+				if prnt: print(f"{prnt} | {self.orders[i-1]['name']} {self.orders[i-1]['calc']} <= {count} <= {self.orders[i]['name']} {self.orders[i]['calc']}")
 				return i
 
 
 def make_array():
-	n = random.randrange(10, 100)  # with random array size
+	n = random.randrange(100, 1000)  # with random array size
 	arr = []
 	for _ in range(n):
-		arr += [random.randrange(-100, 100)]  # and random array elements
+		arr += [random.randrange(-1000, 1000)]  # and random array elements
 	return arr
 
 
 def check_results(expected, result):
 	if result != expected:
 		print(f"ERROR:\n{result=}\n{expected=}")  # print an ERROR if the algorithm didn't do what it's suppsoed to
+
+
+def run_all(run_list, prnt=False):
+	for algorithm in run_list:  # for every algorithm in run_list
+		avg_order_index = 0
+		for i in range(20):  # run 20 times
+			o = BigO()
+			algorithm(o)
+			avg_order_index = (avg_order_index * i + o.get_order_index(prnt=algorithm.__name__ if prnt else None)) / (i + 1)  # caluclate average order index
+		# after running 20 times, output the average order index and a bit of info about that
+		order_int = math.ceil(avg_order_index)
+		print(f"{algorithm.__name__} | {o.orders[order_int]['name']}")
+
+
+#####ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS#####
+##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS
 
 
 def insertion_sort(o, arr=None):
@@ -89,14 +106,22 @@ def merge(o, arr1=None, arr2=None):
 	n = a + b
 	i, j = 0, 0
 	result = []
-	for _ in range(n):
-		if j >= b or (i < a and arr1[i] <= arr2[j]):  # add from arr1 if
-			result += [arr1[i]]
-			i += 1
-		elif i >= a or (j < b and arr1[i] >= arr2[j]):
-			result += [arr2[j]]
-			j += 1
+	if arr1[a-1] <= arr2[0]:
+		result = arr1 + arr2
 		o.add()
+	elif arr2[b-1] <= arr1[0]:
+		result = arr2 + arr1
+		o.add()
+	else:
+		for _ in range(n):
+			if j >= b or (i < a and arr1[i] <= arr2[j]):  # add from arr1 if
+				result += [arr1[i]]
+				i += 1
+				o.add()
+			elif i >= a or (j < b and arr1[i] >= arr2[j]):
+				result += [arr2[j]]
+				j += 1
+				o.add()
 
 	# wrap-up
 	if check:
@@ -135,22 +160,10 @@ def merge_sort(o, arr=None):
 		return result
 
 
+run_list = [
+	insertion_sort,
+	merge,
+	merge_sort,
+]
 
-def run_all():
-	run_list = [
-		insertion_sort,
-		merge,
-		merge_sort,
-	]
-	for algorithm in run_list:  # for every algorithm in run_list
-		avg_order_index = 0
-		for i in range(20):  # run 20 times
-			o = BigO()
-			algorithm(o)
-			avg_order_index = (avg_order_index * i + o.get_order_index()) / (i + 1)  # caluclate average order index
-		# after running 20 times, output the average order index and a bit of info about that
-		order_int = math.ceil(avg_order_index)
-		print(f"{algorithm.__name__} | {avg_order_index=}, {o.orders[order_int]['name']} | index {order_int} = {o.orders[order_int]['name']}, index {order_int-1} = {o.orders[order_int-1]['name']}")
-
-
-run_all()
+run_all(run_list, prnt=False)
