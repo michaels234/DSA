@@ -161,7 +161,7 @@ def run_all(run_list):
 ##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS##########ALGORITHMS
 
 
-def simple_sort(o, arr):
+def selection_sort(o, arr):
 	# function: sort a given array arr in ascending order
 	# approach: incremental
 	# methodology: search for the minimum element, set it at the start of the array,
@@ -178,13 +178,11 @@ def simple_sort(o, arr):
 		# and the left-overs array is from i+1 to len(arr)-1. the order of the leftovers don't matter, so swapping to
 		# that location isnt important, the point is to take the current and leave it in leftovers, then set current to
 		# minimum, which is adding to the results array. same thing just doing it in one array.
-		arr_i = arr[i]
-		arr[i] = arr[min_j]  # swap. note: its possible the current was the min, in which case this really does nothing
-		arr[min_j] = arr_i  # swap
+		arr[i], arr[min_j] = arr[min_j], arr[i]  # swap. note: its possible the current was the min, in which case this really does nothing
 	return arr
 
 
-def modified_simple_sort(o, arr):
+def modified_selection_sort(o, arr):
 	# function: sort a given array arr in ascending order
 	# approach: incremental
 	# methodology: 
@@ -192,14 +190,12 @@ def modified_simple_sort(o, arr):
 		for j in range(i+1, len(arr)):  # check all after i
 			o.add()
 			if arr[i] > arr[j]:  # if earlier element arr[i] > later element arr[j], swap them
-				arr_i = arr[i]
-				arr[i] = arr[j]
-				arr[j] = arr_i
+				arr[i], arr[j] = arr[j], arr[i]
 				# doesn't stop here, it'll keep swapping arr[i] with everything lower than it until reaching the end,
 				# so at the end arr[i] will be set to whatever the lowest was of the remaining elements.
-				# achieved the same as simple_sort, but without setting a minimum.
-				# its faster than simple_sort because simple_sort has to check the whole leftovers every time for a min,
-				# but modified_simple_sort checks leftovers minus current, and is comparing to current
+				# achieved the same as selection_sort, but without setting a minimum.
+				# its faster than selection_sort because selection_sort has to check the whole leftovers every time for a min,
+				# but modified_selection_sort checks leftovers minus current, and is comparing to current
 	return arr
 
 
@@ -214,9 +210,7 @@ def bubble_sort(o, arr):
 		for i in range(1, len(arr)):  # check all
 			o.add()
 			if arr[i-1] > arr[i]:  # if earlier element arr[i-1] > later element arr[i], swap them
-				arr_i = arr[i]
-				arr[i] = arr[i-1]
-				arr[i-1] = arr_i
+				arr[i], arr[i-1] = arr[i-1], arr[i]
 				swapped = True  # flag to keep while looping. if there was no swap for a whole for loop break while
 				# doesn't stop here, it'll keep swapping arr[j] with everything lower than it until reaching the end,
 				# so at the end arr[i] will be set to whatever the lowest was of the remaining elements.
@@ -320,13 +314,39 @@ def merge_sort(o, arr):
 	return result
 
 
+def quick_sort(o, arr, left=None, right=None):
+
+	def partition(arr, left_p, right_p):
+		arr_right_p = arr[right_p]
+		i = left_p - 1
+		for j in range(left_p, right_p):
+			o.add()
+			if arr[j] < arr_right_p:
+				i += 1
+				arr[i], arr[j] = arr[j], arr[i]
+		arr[right_p], arr[i+1] = arr[i+1], arr[right_p]
+		return i + 1
+
+	if left is None and right is None:
+		left, right = 0, len(arr)-1
+
+	if left < right:
+		pivot = partition(arr, left, right)
+		quick_sort(o, arr, left, pivot-1)
+		quick_sort(o, arr, pivot+1, right)
+	return arr
+			
+			
+
+
 algo_list = [
-	Algorithm(function=simple_sort, checker=sort_checker),
-	Algorithm(function=modified_simple_sort, checker=sort_checker),
+	Algorithm(function=selection_sort, checker=sort_checker),
+	Algorithm(function=modified_selection_sort, checker=sort_checker),
 	Algorithm(function=bubble_sort, checker=sort_checker),
 	Algorithm(function=like_insertion_sort, checker=sort_checker),
 	Algorithm(function=insertion_sort, checker=sort_checker),
 	Algorithm(function=merge_sort, checker=sort_checker),
+	Algorithm(function=quick_sort, checker=sort_checker),
 ]
 run_all(algo_list)
 #test_all(algo_list)
