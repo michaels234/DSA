@@ -1,0 +1,3 @@
+sliding window:
+	track some global max/min, and track window's temp max/min.
+	window's right side is usually simple, the trick is knowing when to move the left side.
