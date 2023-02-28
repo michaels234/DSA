@@ -1,0 +1,6 @@
+hash tables (dictionary or set) are fastest to delete from at O(1), a list can only remove at speed O(1) if its the last element, using pop
+  my_set = {1, 2, 3, 4, 5}
+  my_set.remove(3)
+  my_dict = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5}
+  del my_dict['c']
+  my_list.pop()
